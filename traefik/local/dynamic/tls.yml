@@ -1,0 +1,7 @@
+# Default certificate for every *.dev.localhost URL
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/local.pem
+        keyFile: /certs/local-key.pem

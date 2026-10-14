@@ -1,0 +1,30 @@
+# Local overlay: mkcert certificates, dashboard on https://traefik.dev.localhost.
+services:
+  traefik:
+    ports:
+      # Not reachable from the network.
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    command:
+      - --global.checkNewVersion=false
+      - --global.sendAnonymousUsage=false
+      - --log.level=DEBUG
+      - --api.dashboard=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --providers.docker.endpoint=tcp://socket-proxy:2375
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.network=proxy
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
+    volumes:
+      - ./traefik/local/dynamic:/etc/traefik/dynamic:ro
+      - ./certs:/certs:ro
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.dashboard.rule: Host(`traefik.dev.localhost`)
+      traefik.http.routers.dashboard.entrypoints: websecure
+      traefik.http.routers.dashboard.service: api@internal
