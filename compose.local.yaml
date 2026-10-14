@@ -10,10 +10,13 @@ services:
       - --global.sendAnonymousUsage=false
       - --log.level=DEBUG
       - --api.dashboard=true
+      # Strips ambiguous headers (X.Auth.User read as X-Auth-User by PHP).
       - --entrypoints.web.address=:80
+      - --entrypoints.web.http.aliasHeadersStrategy=delete
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.aliasHeadersStrategy=delete
       - --entrypoints.websecure.http.tls=true
       - --providers.docker.endpoint=tcp://socket-proxy:2375
       - --providers.docker.exposedByDefault=false
