@@ -1,4 +1,4 @@
-comment #!/usr/bin/env bash
+#!/usr/bin/env bash
 # Generates the local wildcard certificate for *.dev.localhost.
 # One level below localhost: browsers reject a *.localhost wildcard.
 #
