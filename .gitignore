@@ -1,6 +1,6 @@
 # APP_ENV
 .env
 
-# Certificate files
+# Certificate Files
 certs/*
 !certs/.gitkeep
