@@ -1,0 +1,29 @@
+# Production overlay: Let's Encrypt certificates, security headers, no dashboard.
+services:
+  traefik:
+    ports:
+      - "80:80"
+      - "443:443"
+    command:
+      - --global.checkNewVersion=false
+      - --global.sendAnonymousUsage=false
+      - --log.level=INFO
+      - --accesslog=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+      - --entrypoints.websecure.http.middlewares=security-headers@file
+      - --certificatesresolvers.letsencrypt.acme.email=david.grosskost@gmail.com
+      - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
+      - --providers.docker.endpoint=tcp://socket-proxy:2375
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.network=proxy
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
+    volumes:
+      - ./traefik/prod/dynamic:/etc/traefik/dynamic:ro
+      - ./certs:/certs

@@ -1,0 +1,18 @@
+http:
+  middlewares:
+    # Applied to every router (see compose.prod.yaml).
+    security-headers:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: false
+        contentTypeNosniff: true
+        frameDeny: true
+        referrerPolicy: strict-origin-when-cross-origin
+        browserXssFilter: true
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      sniStrict: true
