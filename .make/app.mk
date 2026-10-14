@@ -9,10 +9,12 @@ APP_ENV ?=
 SERVICE ?= traefik
 export APP_ENV SERVICE
 
-.PHONY: app@start app@stop
-
+.PHONY: app@start app@stop app@restart
 app@start:
 	@$(APP_SCRIPTS)/app/start.sh
 
 app@stop:
 	@$(APP_SCRIPTS)/app/stop.sh
+
+app@restart:
+	@$(APP_SCRIPTS)/app/restart.sh
