@@ -1,0 +1,19 @@
+# How to expose any project through the reverse proxy.
+# @usage APP_HOST=whoami.dev.localhost docker compose up -d
+services:
+  whoami:
+    image: traefik/whoami
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.whoami.rule: Host(`${APP_HOST:-whoami.dev.localhost}`)
+      traefik.http.routers.whoami.entrypoints: websecure
+      # Only needed when the image exposes several ports.
+      traefik.http.services.whoami.loadbalancer.server.port: "80"
+
+networks:
+  proxy:
+    name: proxy
+    external: true
