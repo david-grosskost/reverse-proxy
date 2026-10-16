@@ -125,6 +125,8 @@ gérés par le reverse-proxy.
 
 Format [Conventional Commits](https://www.conventionalcommits.org/), vérifié à chaque commit
 par `.githooks/commit-msg` : `type(portée): description`, 72 caractères maximum.
+Le même hook est rejoué par GitHub Actions (`.github/workflows/commit-msg.yml`) sur
+chaque push et pull request, pour les commits faits sans le hook local.
 
 ```
 feat(make): add app@logs
