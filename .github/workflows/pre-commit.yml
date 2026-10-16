@@ -1,0 +1,16 @@
+# Runs .githooks/pre-commit on every tracked script, so that commits made
+# without the local hook (web UI, other clone…) are checked too.
+name: pre-commit
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check scripts
+        run: .githooks/pre-commit --all

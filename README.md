@@ -12,7 +12,7 @@ Reverse proxy [Traefik v3](https://doc.traefik.io/traefik/) commun à tous mes p
 
 ```
 Makefile              point d'entrée : liste et inclut .make/*.mk
-.githooks/            hooks Git versionnés (vérification des messages de commit)
+.githooks/            hooks Git versionnés (vérification des scripts et des messages de commit)
 .make/                commandes make : un .mk par domaine (app.mk…)
 .make/scripts/        la logique de chaque commande (scripts/app/start.sh…)
 compose.yaml          socle commun (Traefik + socket-proxy, réseau "proxy")
@@ -46,7 +46,7 @@ l'autre : `APP_ENV=local` sur ton poste, `APP_ENV=prod` sur le serveur.
 | `make cert@create` | *local* — génère le certificat `*.dev.localhost` (une seule fois) |
 | `make network@create` | crée le réseau partagé `proxy` |
 | `make network@ls` | liste les conteneurs branchés sur `proxy` |
-| `make git@hooks` | active la vérification des messages de commit (fait par `app@install` en local) |
+| `make git@hooks` | active la vérification des scripts et des messages de commit (fait par `app@install` en local) |
 
 **Environnement** : le paramètre `APP_ENV=…` s'il est passé, sinon le `.env` s'il existe,
 sinon `local`. Exemple : `make app@config APP_ENV=prod`. Le paramètre ne vaut que pour
@@ -120,6 +120,20 @@ networks:
 Avec `APP_HOST=monapp.dev.localhost` en local et `APP_HOST=monapp.david-grosskost.fr` en prod,
 les mêmes labels fonctionnent partout : HTTPS, redirection HTTP→HTTPS et certificat sont
 gérés par le reverse-proxy.
+
+## Scripts
+
+Avant chaque commit, `.githooks/pre-commit` contrôle les scripts indexés (`*.sh` et
+`.githooks/*`), sans rien installer :
+
+- exécutables dans Git (mode `100755`), sinon il donne la commande à lancer :
+  `git update-index --chmod=+x <fichier>` (sous Windows, le mode n'est pas déduit du disque) ;
+- première ligne `#!/usr/bin/env bash` ;
+- aucun marqueur de conflit (`<<<<<<<`, `>>>>>>>`) oublié après un merge.
+
+`lib.sh`, sourcé et jamais exécuté, n'est contrôlé que pour les marqueurs de conflit.
+GitHub Actions (`.github/workflows/pre-commit.yml`) rejoue le hook sur tous les scripts
+du dépôt (`.githooks/pre-commit --all`) à chaque push et pull request.
 
 ## Messages de commit
 
