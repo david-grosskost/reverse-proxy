@@ -80,7 +80,7 @@ make waf@metrics
 | *Appsec Rules Metrics* | quelles règles ont bloqué, et combien de fois |
 | *Scenario Metrics* | comportements suspects détectés dans les journaux |
 
-Dans *Acquisition Metrics*, la ligne `docker:/reverse-proxy-traefik-1` compte aussi les
+Dans *Acquisition Metrics*, la ligne `docker:/reverse-proxy-traefik` compte aussi les
 journaux techniques de Traefik : un grand nombre de *Lines unparsed* est normal, seules
 les lignes du journal d'accès sont analysées. Les requêtes vers le tableau de bord ne
 figurent pas dans ce journal.

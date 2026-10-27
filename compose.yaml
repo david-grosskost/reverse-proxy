@@ -1,8 +1,10 @@
 # Base shared by all environments, merged with compose.$APP_ENV.yaml.
+# Fixed container names (reverse-proxy-<service>), without Compose's -1 suffix.
 name: reverse-proxy
 
 services:
   socket-proxy:
+    container_name: reverse-proxy-socket-proxy
     image: tecnativa/docker-socket-proxy:v0.5.0
     restart: unless-stopped
     environment:
@@ -16,6 +18,7 @@ services:
       - socket
 
   traefik:
+    container_name: reverse-proxy-traefik
     image: traefik:v3.7
     restart: unless-stopped
     depends_on:
@@ -39,6 +42,7 @@ services:
   # WAF and IP reputation: blocks known attacks (AppSec) and IPs caught
   # scanning or brute-forcing, plus the community blocklist.
   crowdsec:
+    container_name: reverse-proxy-crowdsec
     image: crowdsecurity/crowdsec:v1.8.1
     restart: unless-stopped
     depends_on:
