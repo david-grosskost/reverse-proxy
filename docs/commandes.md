@@ -100,18 +100,3 @@ Utiles surtout pour développer le projet (voir [Développement](developpement.m
 | `make git@hooks` | active les hooks Git du dépôt et installe gitleaks et shellcheck ; `app@install` le fait en local |
 | `make git@gitleaks` | télécharge seulement gitleaks, dans sa version fixée, dans `.tools/bin/` |
 | `make git@shellcheck` | télécharge seulement shellcheck, dans sa version fixée, dans `.tools/bin/` |
-
-## Commandes propres à une machine
-
-Un fichier `local.mk` à la racine, s'il existe, est chargé en plus des autres. Il est fait
-pour ses propres raccourcis, propres à sa machine : ne pas le commiter.
-
-```make
-.PHONY: perso@dashboard
-
-perso@dashboard:
-	@start https://traefik.dev.localhost
-```
-
-Les cibles déclarées dans une ligne `.PHONY` et contenant un `@` apparaissent dans la liste
-affichée par `make`.

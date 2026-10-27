@@ -5,7 +5,6 @@
 .DEFAULT_GOAL := .list
 
 include $(wildcard .make/*.mk)
--include local.mk
 
 # Lists every <domain>@<action> target declared in a .PHONY line.
 .PHONY: .list
