@@ -2,7 +2,7 @@
 # Sends a typical attack (a request for /.env) and checks that the WAF
 # blocks it with a 403. Needs a site served by the proxy.
 #
-# @usage make waf@test [SITE=monsite.david-grosskost.fr]
+# @usage make waf@test [SITE=monsite.example.com]
 set -euo pipefail
 . "$(dirname "$0")/../lib.sh"
 
@@ -11,7 +11,7 @@ load_env waf@test
 host="${SITE:-}"
 if [ -z "$host" ]; then
   [ "$APP_ENV" = local ] \
-    || die "waf@test : préciser un site servi par le proxy — make waf@test SITE=monsite.david-grosskost.fr"
+    || die "waf@test : préciser un site servi par le proxy — make waf@test SITE=monsite.example.com"
   host="traefik.$LOCAL_DOMAIN"
 fi
 
