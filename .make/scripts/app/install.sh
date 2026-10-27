@@ -19,6 +19,9 @@ if [ "$APP_ENV" = local ]; then
   "$SCRIPTS/git/hooks.sh"
   "$SCRIPTS/cert/install.sh"
   [ -f certs/local.pem ] || "$SCRIPTS/cert/create.sh"
+else
+  # No commits on a server: only post-merge is useful, gitleaks is not needed.
+  run git config core.hooksPath .githooks
 fi
 
 "$SCRIPTS/app/start.sh"
