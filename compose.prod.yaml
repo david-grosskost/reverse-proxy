@@ -18,7 +18,7 @@ services:
       - --entrypoints.websecure.http.aliasHeadersStrategy=delete
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt
       - --entrypoints.websecure.http.middlewares=crowdsec@file,security-headers@file
-      - --certificatesresolvers.letsencrypt.acme.email=david.grosskost@gmail.com
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-}
       - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
       - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
