@@ -1,7 +1,7 @@
 # Runs .githooks/pre-commit (every check of pre-commit.d/) on every tracked
 # file, so that commits made without the local hook (web UI, other clone…)
 # are checked too.
-name: pre-commit
+name: Pre-commit Checks
 
 on:
   push:
