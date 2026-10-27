@@ -1,0 +1,19 @@
+# Opens a pull request when a newer version of a Docker image (compose
+# files) or of a GitHub Action (workflows) is released.
+version: 2
+updates:
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+      include: scope
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+      include: scope
