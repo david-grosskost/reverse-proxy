@@ -1,4 +1,7 @@
 # Shared helpers for every make script. Sourced, never executed.
+# shellcheck shell=bash
+# Variables below are used by the scripts that source this file.
+# shellcheck disable=SC2034
 
 ENV_FILE=".env"
 NETWORK="proxy"

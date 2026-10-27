@@ -15,8 +15,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install gitleaks
-        run: .make/scripts/git/gitleaks.sh
+      - name: Install gitleaks and shellcheck
+        run: |
+          .make/scripts/git/gitleaks.sh
+          .make/scripts/git/shellcheck.sh
 
       - name: Run pre-commit checks
         run: .githooks/pre-commit --all
