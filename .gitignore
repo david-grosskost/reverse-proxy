@@ -7,3 +7,6 @@ certs/*
 
 # Project tools (make git@gitleaks)
 /.tools/
+
+# Generated secrets (make waf@key)
+/secrets/

@@ -1,0 +1,18 @@
+# WAF middleware (CrowdSec bouncer plugin), applied to every site through the
+# websecure entrypoint. Fails open: if CrowdSec is down or starting, traffic
+# goes through unchecked rather than every site being blocked.
+http:
+  middlewares:
+    crowdsec:
+      plugin:
+        bouncer:
+          enabled: true
+          crowdsecMode: stream
+          crowdsecLapiHost: crowdsec:8080
+          crowdsecLapiKeyFile: /run/secrets/bouncer_key_traefik
+          updateMaxFailure: -1
+          streamStartupBlock: false
+          crowdsecAppsecEnabled: true
+          crowdsecAppsecHost: crowdsec:7422
+          crowdsecAppsecFailureBlock: false
+          crowdsecAppsecUnreachableBlock: false

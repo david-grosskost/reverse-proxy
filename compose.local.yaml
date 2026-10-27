@@ -9,6 +9,7 @@ services:
       - --global.checkNewVersion=false
       - --global.sendAnonymousUsage=false
       - --log.level=DEBUG
+      - --accesslog=true
       - --api.dashboard=true
       # Strips ambiguous headers (X.Auth.User read as X-Auth-User by PHP).
       - --entrypoints.web.address=:80
@@ -18,13 +19,16 @@ services:
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.aliasHeadersStrategy=delete
       - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.http.middlewares=crowdsec@file
+      - --experimental.plugins.bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      - --experimental.plugins.bouncer.version=v1.8.1
       - --providers.docker.endpoint=tcp://socket-proxy:2375
       - --providers.docker.exposedByDefault=false
       - --providers.docker.network=proxy
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
     volumes:
-      - ./traefik/local/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/local/dynamic:/etc/traefik/dynamic/env:ro
       - ./certs:/certs:ro
     labels:
       traefik.enable: "true"

@@ -17,16 +17,18 @@ services:
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.aliasHeadersStrategy=delete
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt
-      - --entrypoints.websecure.http.middlewares=security-headers@file
+      - --entrypoints.websecure.http.middlewares=crowdsec@file,security-headers@file
       - --certificatesresolvers.letsencrypt.acme.email=david.grosskost@gmail.com
       - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
       - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
+      - --experimental.plugins.bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      - --experimental.plugins.bouncer.version=v1.8.1
       - --providers.docker.endpoint=tcp://socket-proxy:2375
       - --providers.docker.exposedByDefault=false
       - --providers.docker.network=proxy
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
     volumes:
-      - ./traefik/prod/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/prod/dynamic:/etc/traefik/dynamic/env:ro
       - ./certs:/certs

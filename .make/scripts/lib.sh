@@ -3,6 +3,7 @@
 ENV_FILE=".env"
 NETWORK="proxy"
 LOCAL_DOMAIN="dev.localhost"
+BOUNCER_KEY_FILE="secrets/crowdsec-bouncer.key"
 SCRIPTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Prints an error and exits.

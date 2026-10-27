@@ -17,6 +17,9 @@ else
   chmod 600 certs/acme.json
 fi
 
+[ -f "$BOUNCER_KEY_FILE" ] \
+  || die "app@start : clé CrowdSec absente ($BOUNCER_KEY_FILE) — lancer « make waf@key »"
+
 ensure_network || true
 
 compose up -d

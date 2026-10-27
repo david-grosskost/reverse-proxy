@@ -1,0 +1,5 @@
+# Traefik's access logs, read through the socket proxy (read-only Docker API).
+# The traefik container opts in with its crowdsec.* labels (compose.yaml).
+source: docker
+docker_host: tcp://socket-proxy:2375
+use_container_labels: true

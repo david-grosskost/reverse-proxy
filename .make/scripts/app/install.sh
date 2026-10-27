@@ -16,6 +16,8 @@ if [ ! -f "$ENV_FILE" ]; then
   info "$ENV_FILE créé avec APP_ENV=$APP_ENV : les prochaines commandes l'utiliseront."
 fi
 
+"$SCRIPTS/waf/key.sh"
+
 if [ "$APP_ENV" = local ]; then
   "$SCRIPTS/git/hooks.sh"
   "$SCRIPTS/cert/install.sh"
