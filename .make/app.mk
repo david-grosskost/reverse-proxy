@@ -9,7 +9,10 @@ APP_ENV ?=
 SERVICE ?= traefik
 export APP_ENV SERVICE
 
-.PHONY: app@install app@start app@stop app@restart app@status app@logs app@update app@config
+.PHONY: app@check app@install app@start app@stop app@restart app@status app@logs app@update app@config
+
+app@check:
+	@$(APP_SCRIPTS)/app/check.sh
 
 app@install:
 	@$(APP_SCRIPTS)/app/install.sh

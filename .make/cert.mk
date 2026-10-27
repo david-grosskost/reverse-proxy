@@ -2,10 +2,13 @@
 
 CERT_SCRIPTS := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))/scripts
 
-.PHONY: cert@install cert@create
+.PHONY: cert@install cert@create cert@mkcert
 
 cert@install:
 	@$(CERT_SCRIPTS)/cert/install.sh
 
 cert@create:
 	@$(CERT_SCRIPTS)/cert/create.sh
+
+cert@mkcert:
+	@$(CERT_SCRIPTS)/cert/mkcert.sh

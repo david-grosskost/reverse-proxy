@@ -9,11 +9,11 @@ set -euo pipefail
 load_env cert@create
 require_app_env cert@create local
 
-command -v mkcert >/dev/null \
-  || die "cert@create : mkcert introuvable — https://github.com/FiloSottile/mkcert#installation"
+mkcert="$(tool mkcert)" \
+  || die "cert@create : mkcert introuvable — lancer « make cert@install »"
 
 mkdir -p certs
-run mkcert -cert-file certs/local.pem -key-file certs/local-key.pem "*.$LOCAL_DOMAIN"
+run "$mkcert" -cert-file certs/local.pem -key-file certs/local-key.pem "*.$LOCAL_DOMAIN"
 
 if proxy_running; then
   info "Le proxy tourne : « make app@restart » pour charger le nouveau certificat."

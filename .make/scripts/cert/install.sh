@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Installs the mkcert certificate authority. Once per machine.
+# Installs mkcert (pinned, in .tools/bin/) and its certificate authority, so
+# that browsers trust the local certificates. Once per machine.
 #
 # @usage make cert@install
 set -euo pipefail
@@ -8,7 +9,5 @@ set -euo pipefail
 load_env cert@install
 require_app_env cert@install local
 
-command -v mkcert >/dev/null \
-  || die "cert@install : mkcert introuvable — https://github.com/FiloSottile/mkcert#installation"
-
-run mkcert -install
+"$SCRIPTS/cert/mkcert.sh"
+run "$(tool mkcert)" -install

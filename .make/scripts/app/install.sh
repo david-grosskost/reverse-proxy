@@ -7,6 +7,7 @@ set -euo pipefail
 . "$(dirname "$0")/../lib.sh"
 
 load_env app@install
+"$SCRIPTS/app/check.sh"
 
 if [ ! -f "$ENV_FILE" ]; then
   run cp .env.example "$ENV_FILE"

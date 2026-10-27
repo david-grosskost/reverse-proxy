@@ -81,3 +81,19 @@ proxy_running () {
   [ -n "$(docker compose -f compose.yaml -f "compose.$APP_ENV.yaml" \
           ps -q traefik 2>/dev/null)" ]
 }
+
+# Path of a tool: the project's pinned copy in .tools/bin/, else the system one.
+#
+# @param string $1 Tool name
+# @return 1 if the tool is not found
+tool () {
+  if [ -x ".tools/bin/$1.exe" ]; then
+    echo ".tools/bin/$1.exe"
+  elif [ -x ".tools/bin/$1" ]; then
+    echo ".tools/bin/$1"
+  elif command -v "$1" >/dev/null; then
+    echo "$1"
+  else
+    return 1
+  fi
+}
