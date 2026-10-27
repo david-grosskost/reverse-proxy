@@ -2,7 +2,7 @@
 
 GIT_SCRIPTS := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))/scripts
 
-.PHONY: git@hooks
+.PHONY: git@hooks git@gitleaks
 
 git@hooks:
 	@$(GIT_SCRIPTS)/git/hooks.sh

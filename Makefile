@@ -11,7 +11,7 @@ include $(wildcard .make/*.mk)
 .PHONY: .list
 
 .list:
-	@printf '\n  \033[1;35m%s\033[0m — commandes disponibles\n' "$(notdir $(CURDIR))"
+	@printf '\n  \033[1;35m%s\033[0m - commandes disponibles\n' "$(notdir $(CURDIR))"
 	@grep -h '^\.PHONY:' $(MAKEFILE_LIST) \
 		| sed 's/^\.PHONY: *//' | tr ' ' '\n' | grep '@' | sort -u \
 		| awk -F'@' '{ \
