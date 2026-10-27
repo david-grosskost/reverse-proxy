@@ -147,8 +147,12 @@ make app@logs SERVICE=crowdsec         # erreurs au démarrage
 make app@logs | grep -i crowdsec       # erreurs du plugin dans Traefik
 ```
 
-Au premier démarrage, CrowdSec télécharge ses règles : attendre une trentaine de secondes
-avant `make waf@test`.
+Au premier démarrage, CrowdSec télécharge ses règles et redémarre une fois (`Restarting`
+dans `make app@status`) : attendre une trentaine de secondes avant `make waf@test`.
+
+`cscli bouncers list` affiche une colonne *Last API pull* vide tant qu'aucun site n'est
+branché sur le proxy : le plugin de Traefik ne contacte CrowdSec que lorsqu'un site
+l'utilise. Lancer un projet, par exemple [whoami](projets.md#exemple--whoami).
 
 ### Changer la clé CrowdSec
 

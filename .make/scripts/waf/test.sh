@@ -15,7 +15,8 @@ if [ -z "$host" ]; then
   host="traefik.$LOCAL_DOMAIN"
 fi
 
-code="$(curl -sk -o /dev/null -w '%{http_code}' "https://$host/.env")"
+# curl prints 000 and fails when the site can't be reached: keep the code.
+code="$(curl -sk -o /dev/null -w '%{http_code}' "https://$host/.env" || true)"
 if [ "$code" = 403 ]; then
   info "WAF actif : https://$host/.env bloqué (403)."
 else
