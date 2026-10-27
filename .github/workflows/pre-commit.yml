@@ -1,5 +1,6 @@
-# Runs .githooks/pre-commit on every tracked script, so that commits made
-# without the local hook (web UI, other clone…) are checked too.
+# Runs .githooks/pre-commit (every check of pre-commit.d/) on every tracked
+# file, so that commits made without the local hook (web UI, other clone…)
+# are checked too.
 name: pre-commit
 
 on:
@@ -12,5 +13,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check scripts
+      - name: Run pre-commit checks
         run: .githooks/pre-commit --all
