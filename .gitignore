@@ -4,3 +4,6 @@
 # Certificate Files
 certs/*
 !certs/.gitkeep
+
+# Project tools (make git@gitleaks)
+/.tools/
