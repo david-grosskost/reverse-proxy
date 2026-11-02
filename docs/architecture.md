@@ -79,7 +79,7 @@ docker compose -f compose.yaml -f compose.$APP_ENV.yaml …
 | Certificats | un certificat `*.dev.localhost` généré par mkcert | un certificat Let's Encrypt `*.$ACME_DOMAIN`, obtenu et renouvelé automatiquement (challenge DNS) |
 | Tableau de bord | https://traefik.dev.localhost | désactivé |
 | Middlewares sur chaque site | `crowdsec` | `crowdsec`, `security-headers` |
-| En-têtes de sécurité | — | HSTS (1 an), `nosniff`, interdiction des iframes, `Referrer-Policy` |
+| En-têtes de sécurité | — | HSTS (1 an), `nosniff`, iframes du même site uniquement (`SAMEORIGIN`), `Referrer-Policy` |
 | TLS | par défaut | TLS 1.2 minimum, refus des noms inconnus (`sniStrict`) |
 | Journaux | `DEBUG` | `INFO` |
 
