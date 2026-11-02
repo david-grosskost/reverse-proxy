@@ -94,9 +94,9 @@ make app@logs | grep -i acme
 
 | Symptôme | Cause probable |
 |---|---|
-| `Timeout during connect`, `Connection refused` | le port 80 est fermé (pare-feu du serveur ou de l'hébergeur) |
-| `no valid A records found`, `NXDOMAIN` | le DNS ne pointe pas (encore) vers le serveur ; la propagation peut prendre du temps |
-| échec alors que le DNS IPv4 est bon | un enregistrement AAAA (IPv6) existe et pointe ailleurs : Let's Encrypt l'essaie en premier |
+| `ovh: ... This call has not been granted`, `403` | droits de la clé OVH insuffisants ou sur une autre zone : recréer la clé (voir [l'installation](installation.md)), supprimer `secrets/ovh-*`, puis `make cert@ovh` et `make app@restart` |
+| `ovh: ... Invalid credentials`, `invalid key` | clé mal saisie ou révoquée : supprimer `secrets/ovh-*`, puis `make cert@ovh` et `make app@restart` |
+| `NXDOMAIN looking up TXT`, `propagation` | le TXT temporaire n'est pas encore visible : Traefik réessaie ; vérifier que la zone DNS est bien chez OVH |
 | `too many certificates`, `rateLimited` | limite de Let's Encrypt atteinte : attendre (jusqu'à une semaine) ; faire ses essais sur le serveur de test |
 | `permissions 644 for /certs/acme.json are too open` | `chmod 600 certs/acme.json` (`make app@start` le fait) |
 

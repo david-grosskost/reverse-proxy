@@ -2,7 +2,8 @@
 
 Un projet n'a rien à demander au reverse proxy : il rejoint le réseau `proxy` et décrit,
 avec des labels Docker, sous quelle adresse il veut être servi. Traefik le détecte dès son
-démarrage et obtient son certificat.
+démarrage et le sert avec le certificat commun (`*.dev.localhost` en local, `*.example.com`
+en prod).
 
 ## L'essentiel
 
@@ -75,9 +76,9 @@ APP_HOST=monprojet.dev.localhost
 APP_HOST=monprojet.example.com
 ```
 
-En local, le certificat couvre un seul niveau sous `dev.localhost` :
+Le certificat couvre un seul niveau sous le domaine, en local comme en prod :
 `monprojet.dev.localhost` fonctionne, `api.monprojet.dev.localhost` non. Utiliser plutôt
-`monprojet-api.dev.localhost`.
+`monprojet-api.dev.localhost` (et `monprojet-api.example.com` en prod).
 
 ## Le port
 
