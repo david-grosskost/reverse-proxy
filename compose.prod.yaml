@@ -1,4 +1,5 @@
-# Production overlay: Let's Encrypt certificates, security headers, no dashboard.
+# Production overlay: Let's Encrypt wildcard certificate (DNS challenge),
+# security headers, no dashboard.
 services:
   traefik:
     ports:
@@ -17,10 +18,16 @@ services:
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.aliasHeadersStrategy=delete
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+      # One wildcard certificate for every project: site names stay out of the
+      # public certificate logs, and no Let's Encrypt limit per new site.
+      - --entrypoints.websecure.http.tls.domains[0].main=${ACME_DOMAIN:?ACME_DOMAIN manquant dans .env}
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${ACME_DOMAIN:?ACME_DOMAIN manquant dans .env}
       - --entrypoints.websecure.http.middlewares=crowdsec@file,security-headers@file
       - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-}
       - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      # Proves the domain with a temporary TXT record, through the DNS provider's API.
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=${ACME_DNS_PROVIDER:?ACME_DNS_PROVIDER manquant dans .env}
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
       - --experimental.plugins.bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
       - --experimental.plugins.bouncer.version=v1.8.1
@@ -29,6 +36,11 @@ services:
       - --providers.docker.network=proxy
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
+    # DNS provider credentials, written by make cert@dns: settings, and
+    # <VAR>_FILE paths to the secret values (never the values themselves).
+    env_file:
+      - ./secrets/acme-dns.env
     volumes:
       - ./traefik/prod/dynamic:/etc/traefik/dynamic/env:ro
       - ./certs:/certs
+      - ./secrets/acme-dns:/run/secrets/acme-dns:ro

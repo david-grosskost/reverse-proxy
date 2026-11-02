@@ -60,6 +60,10 @@ Traefik. Voir [Brancher un projet](projets.md).
   donc à tous les projets, sans qu'ils aient à le déclarer.
 - **Clé CrowdSec** : générée sur la machine (`secrets/crowdsec-bouncer.key`, droits `600`),
   jamais versionnée, transmise aux conteneurs comme secret Docker.
+- **Identifiants DNS**, en prod : limités à la zone DNS du domaine, saisis sans être
+  affichés (`make cert@dns`), un fichier par valeur dans `secrets/acme-dns/` (droits `600`),
+  monté en lecture seule dans Traefik. Les valeurs ne passent jamais par des variables
+  d'environnement : Traefik reçoit seulement le chemin des fichiers (`<VARIABLE>_FILE`).
 
 ## Local et prod
 
@@ -72,7 +76,7 @@ docker compose -f compose.yaml -f compose.$APP_ENV.yaml …
 | | local (`compose.local.yaml`) | prod (`compose.prod.yaml`) |
 |---|---|---|
 | Ports | `127.0.0.1:80` et `:443` : joignables depuis le poste seulement | `80` et `443` ouverts sur Internet |
-| Certificats | un certificat `*.dev.localhost` généré par mkcert | un certificat Let's Encrypt par site, obtenu et renouvelé automatiquement |
+| Certificats | un certificat `*.dev.localhost` généré par mkcert | un certificat Let's Encrypt `*.$ACME_DOMAIN`, obtenu et renouvelé automatiquement (challenge DNS) |
 | Tableau de bord | https://traefik.dev.localhost | désactivé |
 | Middlewares sur chaque site | `crowdsec` | `crowdsec`, `security-headers` |
 | En-têtes de sécurité | — | HSTS (1 an), `nosniff`, interdiction des iframes, `Referrer-Policy` |
@@ -101,8 +105,9 @@ Rien de ce qui est propre à une machine n'est versionné :
 
 | Fichier ou volume | Créé par | Contenu |
 |---|---|---|
-| `.env` | `app@install` | réglages de la machine (`APP_ENV`, `ACME_EMAIL`) |
+| `.env` | `app@install` | réglages de la machine (`APP_ENV`, `ACME_DOMAIN`, `ACME_DNS_PROVIDER`, `ACME_EMAIL`) |
 | `secrets/crowdsec-bouncer.key` | `app@install` (`waf@key`) | clé partagée entre Traefik et CrowdSec |
+| `secrets/acme-dns/`, `secrets/acme-dns.env` | `app@install` (`cert@dns`), en prod | identifiants du fournisseur DNS, et chemins donnés à Traefik |
 | `certs/local.pem`, `certs/local-key.pem` | `cert@create` | certificat local |
 | `certs/acme.json` | Traefik, en prod | compte et certificats Let's Encrypt (droits `600` obligatoires) |
 | `.tools/bin/` | `app@install` | mkcert, gitleaks, shellcheck, dans leur version fixée |

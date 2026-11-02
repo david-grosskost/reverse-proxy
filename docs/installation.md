@@ -98,7 +98,7 @@ générique couvre tous les projets d'un coup :
 | A | `*.example.com` | `203.0.113.10` |
 
 Ne pas créer d'enregistrement AAAA (IPv6) tant que le serveur n'est pas joignable en IPv6 :
-Let's Encrypt l'essaierait en priorité, et la demande de certificat échouerait.
+les visiteurs l'essaieraient en priorité, et les sites ne répondraient pas.
 
 Vérifier depuis n'importe quelle machine :
 
@@ -115,10 +115,41 @@ Les ports 80 et 443 doivent être ouverts. Avec `ufw`, en autorisant SSH en prem
 sudo ufw allow OpenSSH && sudo ufw allow 80/tcp && sudo ufw allow 443/tcp
 ```
 
-Le port 80 est nécessaire même si tout est en HTTPS : Let's Encrypt l'utilise pour
-vérifier le domaine, et Traefik y redirige les visiteurs vers HTTPS.
+Le port 80 reste utile même si tout est en HTTPS : Traefik y redirige les visiteurs vers
+HTTPS.
 
-### 3. Accès au dépôt
+### 3. Identifiants du fournisseur DNS
+
+En prod, Traefik obtient **un seul certificat** `*.example.com` (plus `example.com`), valable
+pour tous les projets. Pour prouver à Let's Encrypt que le domaine est à nous, il crée un
+enregistrement TXT temporaire dans la zone DNS, par l'API du fournisseur DNS (*challenge
+DNS*). Avantages :
+
+- les noms des sites n'apparaissent pas dans les journaux publics de certificats
+  ([crt.sh](https://crt.sh)), seul le wildcard y figure ;
+- un nouveau projet ne demande pas de nouveau certificat : pas de limite Let's Encrypt, pas
+  d'attente.
+
+Le fournisseur se règle avec `ACME_DNS_PROVIDER`. `make cert@dns` connaît `ovh`,
+`cloudflare` et `gandiv5` ; pour un autre, ajouter ses variables dans
+`.make/scripts/cert/dns.sh` (liste des fournisseurs et de leurs variables :
+[lego](https://go-acme.github.io/lego/dns/)).
+
+Créer les identifiants chez le fournisseur, en ne donnant que les droits nécessaires.
+Exemple chez OVH, sur https://eu.api.ovh.com/createToken/ :
+
+| Champ | Valeur |
+|---|---|
+| Application name | `traefik-<serveur>` |
+| Application description | `Let's Encrypt DNS challenge` |
+| Validity | `Unlimited` |
+| Rights | `POST` `/domain/zone/example.com/*` et `DELETE` `/domain/zone/example.com/*` |
+
+Ces deux droits suffisent, et la clé ne peut modifier que cette zone DNS. Garder les
+valeurs obtenues dans un gestionnaire de mots de passe (le secret n'est plus jamais
+réaffiché) : `make app@install` les demande à l'étape 5.
+
+### 4. Accès au dépôt
 
 Sur un serveur, utiliser une **deploy key** : elle ne donne accès qu'à ce dépôt, en
 lecture seule.
@@ -143,7 +174,7 @@ chmod 600 ~/.ssh/config
 ssh -T git@github-reverse-proxy     # → Hi <compte>/reverse-proxy!
 ```
 
-### 4. Installer, sur le serveur de test de Let's Encrypt
+### 5. Installer, sur le serveur de test de Let's Encrypt
 
 Let's Encrypt limite le nombre de certificats délivrés. Pour une première installation,
 utiliser son serveur de test (*staging*), qui délivre des certificats sans valeur mais
@@ -152,19 +183,23 @@ sans limite :
 ```bash
 git clone git@github-reverse-proxy:<compte>/reverse-proxy.git ~/reverse-proxy
 cd ~/reverse-proxy
-make app@install APP_ENV=prod ACME_EMAIL=moi@example.com \
+make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_DNS_PROVIDER=ovh \
+  ACME_EMAIL=moi@example.com \
   ACME_CA_SERVER=https://acme-staging-v02.api.letsencrypt.org/directory
 ```
 
-`APP_ENV` et `ACME_EMAIL` sont enregistrés dans `.env` : les commandes suivantes n'en ont
-plus besoin. L'e-mail est facultatif (Let's Encrypt n'envoie plus d'avis d'expiration) ;
+La commande demande les identifiants DNS (la saisie n'est pas affichée) et les enregistre
+dans `secrets/acme-dns/`, en droits `600`.
+
+`APP_ENV`, `ACME_DOMAIN`, `ACME_DNS_PROVIDER` et `ACME_EMAIL` sont enregistrés dans
+`.env` : les commandes suivantes n'en ont plus besoin. L'e-mail est facultatif (Let's Encrypt n'envoie plus d'avis d'expiration) ;
 il sert de contact pour le compte. Le serveur de test, lui, ne vaut que pour cette
 commande.
 
 > Tout réglage de `.env.example` peut être donné ainsi à `make app@install` ; il est
 > écrit dans `.env` à sa création. Ensuite, on modifie `.env` à la main.
 
-### 5. Vérifier, puis passer aux vrais certificats
+### 6. Vérifier, puis passer aux vrais certificats
 
 Lancer un projet de test (voir [Brancher un projet](projets.md)), puis vérifier
 l'émetteur du certificat :

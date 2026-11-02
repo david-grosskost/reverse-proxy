@@ -7,6 +7,9 @@ ENV_FILE=".env"
 NETWORK="proxy"
 LOCAL_DOMAIN="dev.localhost"
 BOUNCER_KEY_FILE="secrets/crowdsec-bouncer.key"
+# DNS provider credentials, in prod (make cert@dns).
+ACME_DNS_ENV="secrets/acme-dns.env"
+ACME_DNS_DIR="secrets/acme-dns"
 SCRIPTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Prints an error and exits.
