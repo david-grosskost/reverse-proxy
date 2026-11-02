@@ -7,7 +7,9 @@ http:
         stsIncludeSubdomains: true
         stsPreload: false
         contentTypeNosniff: true
-        frameDeny: true
+        # Iframes from the same site only: SuiteCRM 8 shows its legacy pages
+        # in an iframe, other sites still cannot frame ours (clickjacking).
+        customFrameOptionsValue: SAMEORIGIN
         referrerPolicy: strict-origin-when-cross-origin
         browserXssFilter: true
 
