@@ -6,7 +6,7 @@ d'une machine, en HTTPS partout, avec un pare-feu applicatif (WAF) devant chaque
 | Environnement | Adresse des projets | Certificats |
 |---|---|---|
 | local | `https://<projet>.dev.localhost` | [mkcert](https://github.com/FiloSottile/mkcert), générés sur le poste |
-| prod | `https://<projet>.example.com` | [Let's Encrypt](https://letsencrypt.org/) : un certificat `*.example.com`, obtenu et renouvelé automatiquement (DNS chez OVH) |
+| prod | `https://<projet>.example.com` | [Let's Encrypt](https://letsencrypt.org/) : un certificat `*.example.com`, obtenu et renouvelé automatiquement |
 
 Un projet se branche sur le reverse proxy avec quelques labels Docker : aucune
 modification du reverse proxy n'est nécessaire.
@@ -30,7 +30,7 @@ make app@install
 
 Le tableau de bord de Traefik est alors disponible sur https://traefik.dev.localhost.
 
-Sur un serveur : `make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_EMAIL=moi@example.com` (voir [l'installation](docs/installation.md)).
+Sur un serveur : `make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_DNS_PROVIDER=ovh` (voir [l'installation](docs/installation.md)).
 
 `make` sans argument liste toutes les commandes disponibles.
 

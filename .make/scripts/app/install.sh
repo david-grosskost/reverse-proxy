@@ -10,7 +10,7 @@ load_env app@install
 "$SCRIPTS/app/check.sh"
 
 # Every setting of .env.example given as a parameter is written to .env:
-#   make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_EMAIL=me@example.com
+#   make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_DNS_PROVIDER=ovh
 if [ ! -f "$ENV_FILE" ]; then
   run cp .env.example "$ENV_FILE"
   while IFS='=' read -r key _; do
@@ -31,7 +31,7 @@ if [ "$APP_ENV" = local ]; then
 else
   # No commits on a server: only post-merge is useful, gitleaks is not needed.
   run git config core.hooksPath .githooks
-  "$SCRIPTS/cert/ovh.sh"
+  "$SCRIPTS/cert/dns.sh"
 fi
 
 "$SCRIPTS/app/start.sh"

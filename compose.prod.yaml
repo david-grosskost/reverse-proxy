@@ -1,4 +1,4 @@
-# Production overlay: Let's Encrypt wildcard certificate (DNS challenge at OVH),
+# Production overlay: Let's Encrypt wildcard certificate (DNS challenge),
 # security headers, no dashboard.
 services:
   traefik:
@@ -25,8 +25,8 @@ services:
       - --entrypoints.websecure.http.middlewares=crowdsec@file,security-headers@file
       - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-}
       - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
-      # Proves the domain with a temporary TXT record, through the OVH API.
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=ovh
+      # Proves the domain with a temporary TXT record, through the DNS provider's API.
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=${ACME_DNS_PROVIDER:?ACME_DNS_PROVIDER manquant dans .env}
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
       - --experimental.plugins.bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
@@ -36,25 +36,11 @@ services:
       - --providers.docker.network=proxy
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
-    environment:
-      OVH_ENDPOINT: ovh-eu
-      # Read from the files mounted by Docker, never from environment values.
-      OVH_APPLICATION_KEY_FILE: /run/secrets/ovh_application_key
-      OVH_APPLICATION_SECRET_FILE: /run/secrets/ovh_application_secret
-      OVH_CONSUMER_KEY_FILE: /run/secrets/ovh_consumer_key
-    secrets:
-      - ovh_application_key
-      - ovh_application_secret
-      - ovh_consumer_key
+    # DNS provider credentials, written by make cert@dns: settings, and
+    # <VAR>_FILE paths to the secret values (never the values themselves).
+    env_file:
+      - ./secrets/acme-dns.env
     volumes:
       - ./traefik/prod/dynamic:/etc/traefik/dynamic/env:ro
       - ./certs:/certs
-
-secrets:
-  # OVH API keys, limited to the DNS zone, entered by make cert@ovh.
-  ovh_application_key:
-    file: ./secrets/ovh-application-key
-  ovh_application_secret:
-    file: ./secrets/ovh-application-secret
-  ovh_consumer_key:
-    file: ./secrets/ovh-consumer-key
+      - ./secrets/acme-dns:/run/secrets/acme-dns:ro

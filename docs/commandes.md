@@ -49,15 +49,15 @@ exemple la valeur de `ACME_EMAIL` en prod.
 
 ## cert : les certificats
 
-En local, les certificats sont générés par mkcert. En prod, le certificat wildcard vient de
-Let's Encrypt, obtenu par Traefik avec les clés de l'API OVH.
+En local, le certificat est généré par mkcert. En prod, le certificat wildcard vient de
+Let's Encrypt, obtenu par Traefik avec les identifiants du fournisseur DNS.
 
 | Commande | Rôle |
 |---|---|
 | `make cert@install` | installe mkcert et son autorité de certification, pour que les navigateurs fassent confiance aux certificats locaux ; une fois par poste |
 | `make cert@create` | génère le certificat `*.dev.localhost` dans `certs/` |
 | `make cert@mkcert` | télécharge seulement mkcert, dans sa version fixée, dans `.tools/bin/` |
-| `make cert@ovh` | prod : demande les clés de l'API OVH absentes et les enregistre dans `secrets/` ; pour en changer, supprimer `secrets/ovh-*` puis relancer |
+| `make cert@dns` | prod : demande les identifiants du fournisseur DNS (`ACME_DNS_PROVIDER`) et les enregistre dans `secrets/acme-dns/` ; pour en changer, supprimer `secrets/acme-dns.env` et `secrets/acme-dns/`, puis relancer |
 
 Après un `cert@create`, lancer `make app@restart` pour que Traefik charge le nouveau
 certificat.

@@ -94,9 +94,9 @@ make app@logs | grep -i acme
 
 | Symptôme | Cause probable |
 |---|---|
-| `ovh: ... This call has not been granted`, `403` | droits de la clé OVH insuffisants ou sur une autre zone : recréer la clé (voir [l'installation](installation.md)), supprimer `secrets/ovh-*`, puis `make cert@ovh` et `make app@restart` |
-| `ovh: ... Invalid credentials`, `invalid key` | clé mal saisie ou révoquée : supprimer `secrets/ovh-*`, puis `make cert@ovh` et `make app@restart` |
-| `NXDOMAIN looking up TXT`, `propagation` | le TXT temporaire n'est pas encore visible : Traefik réessaie ; vérifier que la zone DNS est bien chez OVH |
+| `403`, `not been granted`, `unauthorized` | droits des identifiants DNS insuffisants, ou sur une autre zone : les recréer (voir [l'installation](installation.md)), supprimer `secrets/acme-dns.env` et `secrets/acme-dns/`, puis `make cert@dns` et `make app@restart` |
+| `invalid credentials`, `invalid key`, `invalid token` | identifiant mal saisi ou révoqué : même correction |
+| `NXDOMAIN looking up TXT`, `propagation` | l'enregistrement TXT temporaire n'est pas encore visible : Traefik réessaie ; vérifier que la zone DNS est bien chez le fournisseur de `ACME_DNS_PROVIDER` |
 | `too many certificates`, `rateLimited` | limite de Let's Encrypt atteinte : attendre (jusqu'à une semaine) ; faire ses essais sur le serveur de test |
 | `permissions 644 for /certs/acme.json are too open` | `chmod 600 certs/acme.json` (`make app@start` le fait) |
 

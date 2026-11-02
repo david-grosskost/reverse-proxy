@@ -98,10 +98,7 @@ générique couvre tous les projets d'un coup :
 | A | `*.example.com` | `203.0.113.10` |
 
 Ne pas créer d'enregistrement AAAA (IPv6) tant que le serveur n'est pas joignable en IPv6 :
-les visiteurs l'essaieraient en priorité, et le site ne répondrait pas.
-
-La zone DNS du domaine doit être gérée chez OVH : Traefik y prouve à Let's Encrypt que le
-domaine est à nous (voir l'étape 3).
+les visiteurs l'essaieraient en priorité, et les sites ne répondraient pas.
 
 Vérifier depuis n'importe quelle machine :
 
@@ -121,18 +118,25 @@ sudo ufw allow OpenSSH && sudo ufw allow 80/tcp && sudo ufw allow 443/tcp
 Le port 80 reste utile même si tout est en HTTPS : Traefik y redirige les visiteurs vers
 HTTPS.
 
-### 3. Clés de l'API OVH
+### 3. Identifiants du fournisseur DNS
 
 En prod, Traefik obtient **un seul certificat** `*.example.com` (plus `example.com`), valable
-pour tous les projets. Pour le prouver à Let's Encrypt, il crée un enregistrement TXT
-temporaire dans la zone DNS, par l'API d'OVH :
+pour tous les projets. Pour prouver à Let's Encrypt que le domaine est à nous, il crée un
+enregistrement TXT temporaire dans la zone DNS, par l'API du fournisseur DNS (*challenge
+DNS*). Avantages :
 
 - les noms des sites n'apparaissent pas dans les journaux publics de certificats
   ([crt.sh](https://crt.sh)), seul le wildcard y figure ;
 - un nouveau projet ne demande pas de nouveau certificat : pas de limite Let's Encrypt, pas
   d'attente.
 
-Créer les clés sur https://eu.api.ovh.com/createToken/ :
+Le fournisseur se règle avec `ACME_DNS_PROVIDER`. `make cert@dns` connaît `ovh`,
+`cloudflare` et `gandiv5` ; pour un autre, ajouter ses variables dans
+`.make/scripts/cert/dns.sh` (liste des fournisseurs et de leurs variables :
+[lego](https://go-acme.github.io/lego/dns/)).
+
+Créer les identifiants chez le fournisseur, en ne donnant que les droits nécessaires.
+Exemple chez OVH, sur https://eu.api.ovh.com/createToken/ :
 
 | Champ | Valeur |
 |---|---|
@@ -141,10 +145,9 @@ Créer les clés sur https://eu.api.ovh.com/createToken/ :
 | Validity | `Unlimited` |
 | Rights | `POST` `/domain/zone/example.com/*` et `DELETE` `/domain/zone/example.com/*` |
 
-Ces deux droits suffisent, et la clé ne peut modifier que cette zone DNS. OVH affiche
-ensuite trois valeurs (*Application Key*, *Application Secret*, *Consumer Key*) : les
-garder dans un gestionnaire de mots de passe, le secret n'est plus jamais réaffiché.
-`make app@install` les demande à l'étape 5 (ou `make cert@ovh`).
+Ces deux droits suffisent, et la clé ne peut modifier que cette zone DNS. Garder les
+valeurs obtenues dans un gestionnaire de mots de passe (le secret n'est plus jamais
+réaffiché) : `make app@install` les demande à l'étape 5.
 
 ### 4. Accès au dépôt
 
@@ -180,15 +183,16 @@ sans limite :
 ```bash
 git clone git@github-reverse-proxy:<compte>/reverse-proxy.git ~/reverse-proxy
 cd ~/reverse-proxy
-make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_EMAIL=moi@example.com \
+make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_DNS_PROVIDER=ovh \
+  ACME_EMAIL=moi@example.com \
   ACME_CA_SERVER=https://acme-staging-v02.api.letsencrypt.org/directory
 ```
 
-La commande demande les trois clés OVH (la saisie n'est pas affichée) et les enregistre
-dans `secrets/`, en droits `600`.
+La commande demande les identifiants DNS (la saisie n'est pas affichée) et les enregistre
+dans `secrets/acme-dns/`, en droits `600`.
 
-`APP_ENV`, `ACME_DOMAIN` et `ACME_EMAIL` sont enregistrés dans `.env` : les commandes
-suivantes n'en ont plus besoin. L'e-mail est facultatif (Let's Encrypt n'envoie plus d'avis d'expiration) ;
+`APP_ENV`, `ACME_DOMAIN`, `ACME_DNS_PROVIDER` et `ACME_EMAIL` sont enregistrés dans
+`.env` : les commandes suivantes n'en ont plus besoin. L'e-mail est facultatif (Let's Encrypt n'envoie plus d'avis d'expiration) ;
 il sert de contact pour le compte. Le serveur de test, lui, ne vaut que pour cette
 commande.
 

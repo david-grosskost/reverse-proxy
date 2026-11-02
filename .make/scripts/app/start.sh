@@ -11,12 +11,11 @@ if [ "$APP_ENV" = local ]; then
   [ -f certs/local.pem ] && [ -f certs/local-key.pem ] \
     || die "app@start : certificat local absent — lancer « make cert@create »"
 else
-  [ -n "${ACME_DOMAIN:-}" ] \
-    || die "app@start : ACME_DOMAIN absent du .env (ex. ACME_DOMAIN=example.com)"
-  for file in "${OVH_KEY_FILES[@]}"; do
-    [ -f "$file" ] \
-      || die "app@start : clé OVH absente ($file) — lancer « make cert@ovh »"
+  for key in ACME_DOMAIN ACME_DNS_PROVIDER; do
+    [ -n "${!key:-}" ] || die "app@start : $key absent du .env (voir .env.example)"
   done
+  [ -f "$ACME_DNS_ENV" ] \
+    || die "app@start : identifiants DNS absents ($ACME_DNS_ENV) — lancer « make cert@dns »"
   # Traefik refuses an acme.json readable by others.
   mkdir -p certs
   touch certs/acme.json
