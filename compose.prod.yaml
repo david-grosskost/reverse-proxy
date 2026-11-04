@@ -44,3 +44,10 @@ services:
       - ./traefik/prod/dynamic:/etc/traefik/dynamic/env:ro
       - ./certs:/certs
       - ./secrets/acme-dns:/run/secrets/acme-dns:ro
+
+  crowdsec:
+    # On a server, everything of the reverse proxy lives in its directory:
+    # same targets as the volumes of compose.yaml, which these replace.
+    volumes:
+      - ./data/crowdsec/config:/etc/crowdsec
+      - ./data/crowdsec/data:/var/lib/crowdsec/data

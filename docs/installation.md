@@ -180,9 +180,13 @@ Let's Encrypt limite le nombre de certificats délivrés. Pour une première ins
 utiliser son serveur de test (*staging*), qui délivre des certificats sans valeur mais
 sans limite :
 
+Le reverse proxy s'installe dans `/srv/reverse-proxy`, avec les autres services de la
+machine. Le dossier appartient à l'utilisateur courant, qui fait les `git pull` :
+
 ```bash
-git clone git@github-reverse-proxy:<compte>/reverse-proxy.git ~/reverse-proxy
-cd ~/reverse-proxy
+sudo mkdir -p /srv/reverse-proxy && sudo chown "$USER": /srv/reverse-proxy
+git clone git@github-reverse-proxy:<compte>/reverse-proxy.git /srv/reverse-proxy
+cd /srv/reverse-proxy
 make app@install APP_ENV=prod ACME_DOMAIN=example.com ACME_DNS_PROVIDER=ovh \
   ACME_EMAIL=moi@example.com \
   ACME_CA_SERVER=https://acme-staging-v02.api.letsencrypt.org/directory

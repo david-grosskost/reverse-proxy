@@ -109,7 +109,8 @@ docker compose exec crowdsec cscli collections list # règles installées
 ```
 
 Les données de CrowdSec (configuration, règles téléchargées, décisions) sont dans les
-volumes `crowdsec-config` et `crowdsec-data` : elles survivent à `make app@stop`.
+volumes `crowdsec-config` et `crowdsec-data` en local, et dans `data/crowdsec/` en prod :
+elles survivent à `make app@stop`.
 
 La clé `secrets/crowdsec-bouncer.key` ne doit pas être régénérée seule : CrowdSec
 l'enregistre à son premier démarrage, et une nouvelle clé ne correspondrait plus (voir le

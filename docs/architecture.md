@@ -111,9 +111,10 @@ Rien de ce qui est propre à une machine n'est versionné :
 | `certs/local.pem`, `certs/local-key.pem` | `cert@create` | certificat local |
 | `certs/acme.json` | Traefik, en prod | compte et certificats Let's Encrypt (droits `600` obligatoires) |
 | `.tools/bin/` | `app@install` | mkcert, gitleaks, shellcheck, dans leur version fixée |
-| volumes `crowdsec-config`, `crowdsec-data` | Docker | configuration, règles et décisions de CrowdSec |
+| volumes `crowdsec-config`, `crowdsec-data` (local), `data/crowdsec/` (prod) | Docker, `app@start` en prod | configuration, règles et décisions de CrowdSec |
 
-`make app@stop` conserve les volumes : les adresses bloquées le restent après un redémarrage.
+`make app@stop` conserve ces données : les adresses bloquées le restent après un redémarrage.
+En prod, tout ce qui concerne le reverse proxy est ainsi dans son dossier, `/srv/reverse-proxy`.
 
 ## Arborescence
 
@@ -135,6 +136,7 @@ Rien de ce qui est propre à une machine n'est versionné :
 │   └── prod/dynamic/
 ├── crowdsec/acquis.d/        # ce que CrowdSec analyse
 ├── certs/                    # certificats (non versionnés)
+├── data/crowdsec/            # données de CrowdSec, en prod (non versionnées)
 ├── .githooks/                # hooks Git (voir Développement)
 ├── .github/                  # GitHub Actions et Dependabot
 └── docs/
