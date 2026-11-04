@@ -10,3 +10,6 @@ certs/*
 
 # Generated secrets (make waf@key)
 /secrets/
+
+# CrowdSec data, in prod (configuration, rules, decisions)
+/data/

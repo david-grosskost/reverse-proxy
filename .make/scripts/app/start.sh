@@ -16,6 +16,8 @@ else
   done
   [ -f "$ACME_DNS_ENV" ] \
     || die "app@start : identifiants DNS absents ($ACME_DNS_ENV) — lancer « make cert@dns »"
+  # CrowdSec data, kept in the project directory (compose.prod.yaml).
+  mkdir -p data/crowdsec/config data/crowdsec/data
   # Traefik refuses an acme.json readable by others.
   mkdir -p certs
   touch certs/acme.json
