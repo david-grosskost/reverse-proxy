@@ -11,6 +11,9 @@ http:
         # in an iframe, other sites still cannot frame ours (clickjacking).
         customFrameOptionsValue: SAMEORIGIN
         referrerPolicy: strict-origin-when-cross-origin
+        # Browser features no site behind the proxy needs: denied to the page
+        # and to anything it embeds.
+        permissionsPolicy: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
         browserXssFilter: true
 
 tls:
