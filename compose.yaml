@@ -43,7 +43,7 @@ services:
   # scanning or brute-forcing, plus the community blocklist.
   crowdsec:
     container_name: reverse-proxy-crowdsec
-    image: crowdsecurity/crowdsec:v1.8.1
+    image: crowdsecurity/crowdsec:v1.8.2
     restart: unless-stopped
     depends_on:
       - socket-proxy
